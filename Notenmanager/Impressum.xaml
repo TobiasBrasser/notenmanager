@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Notenmanager.Impressum"
+             Title="Impressum">
+    <StackLayout HorizontalOptions="Center">
+
+        <Label Text="Impressum" 
+               FontSize="30" 
+               
+               VerticalOptions="Center"/>
+
+        <BoxView HeightRequest="10" Color="Transparent" />
+        <BoxView HeightRequest="10" Color="Transparent" />
+        <BoxView HeightRequest="10" Color="Transparent" />
+        <BoxView HeightRequest="10" Color="Transparent" />
+
+        <Label Text="Firmenname:" FontSize="16" TextColor="#4472C4"/>
+        <Label Text="Notenmanager AG" FontSize="16" TextColor="Black"/>
+
+        <Label Text="Vertretungsberechtigter:" FontSize="16" TextColor="#4472C4"/>
+        <Label Text="Tobias Brasser" FontSize="16" TextColor="Black"/>
+
+        <Label Text="Adresse:" FontSize="16" TextColor="#4472C4"/>
+        <Label Text="Sägetweg 7, 4538 Oberbipp" FontSize="16" TextColor="Black"/>
+
+        <Label Text="Telefon:" FontSize="16" TextColor="#4472C4"/>
+            <Label Text="+41 79 816 55 92" FontSize="16" TextColor="Black"/>
+
+        <Label Text="E-Mail:" FontSize="16" TextColor="#4472C4"/>
+            <Label Text="tobiasbrasser81@gmail.com" FontSize="16" TextColor="Black"/>
+
+        <Label Text="Handelsregister:" FontSize="16" TextColor="#4472C4"/>
+            <Label Text="HRB 12345 Amtsgericht Bern" FontSize="16" TextColor="Black"/>
+
+        <Label Text="Umsatzsteuer-ID:" FontSize="16" TextColor="#4472C4"/>
+            <Label Text="DE123456789" FontSize="16" TextColor="Black"/>
+
+        <Label Text="Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:" FontSize="16" TextColor="#4472C4"/>
+        <Label Text="Tobias Brasser, Sägetweg 7, 4538 Oberbipp" FontSize="16" TextColor="Black"/>
+
+        <BoxView HeightRequest="10" Color="Transparent" />
+        <BoxView HeightRequest="10" Color="Transparent" />
+        <BoxView HeightRequest="10" Color="Transparent" />
+        <BoxView HeightRequest="10" Color="Transparent" />
+        <Button 
+            x:Name="BackToMain"
+            Text="Zurück zur Hauptseite" 
+            Clicked="OnNavigate"       
+            HorizontalOptions="CenterAndExpand" />
+
+    </StackLayout>
+</ContentPage>

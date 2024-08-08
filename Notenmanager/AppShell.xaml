@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Notenmanager.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Notenmanager"
+    Shell.FlyoutBehavior="Disabled"
+	Shell.NavBarIsVisible="False">
+
+    <TabBar>
+        <Tab Title="Home">
+            <ShellContent Icon="dotnet_bot.svg" ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" />
+        </Tab>
+        <Tab Title="Notenmanager" Icon ="dotnet_bot.svg">
+            <ShellContent ContentTemplate="{DataTemplate local:Notenmanager}" Route="Notenmanager" />
+        </Tab>
+
+        <Tab Title="Hilfe" Icon="dotnet_bot.svg">
+            <ShellContent ContentTemplate="{DataTemplate local:Kontakt}" Route="Kontakt" />
+        </Tab>
+
+        <Tab Title="Impressum" Icon="dotnet_bot.svg">
+            <ShellContent ContentTemplate="{DataTemplate local:Impressum}" Route="Impressum" />
+        </Tab>
+    </TabBar>
+</Shell>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Notenmanager.Kontakt"
+             Title="Kontakt">
+    <ScrollView>
+
+    <VerticalStackLayout>
+        <Label 
+            Text="Gibt es Probleme mit Ihrer App oder benötigen Sie anderweitige Hilfestellung?"
+            FontSize="20"      
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+
+        <Label Text="Kein Problem! Füllen Sie das Kontaktformular aus und wir helfen Ihnen."
+               FontSize="20"
+           
+               VerticalOptions="Center" 
+               HorizontalOptions="Center" />
+        <BoxView HeightRequest="10" Color="Transparent" />
+        <BoxView HeightRequest="10" Color="Transparent" />
+        <BoxView HeightRequest="10" Color="Transparent" />
+        <BoxView HeightRequest="10" Color="Transparent" />
+        
+
+        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+            <StackLayout  HorizontalOptions="Center" VerticalOptions="Center">
+            <Label Text="Vorname:"  />
+            <Entry x:Name="firstNameEntry" MaxLength="20" WidthRequest="550" HeightRequest="40" />
+            </StackLayout>
+
+            <StackLayout  HorizontalOptions="Center" VerticalOptions="Center">
+            <Label Text="Nachname:"/>
+            <Entry x:Name="lastNameEntry" MaxLength="20" WidthRequest="550" HeightRequest="40" />
+            </StackLayout>
+
+            <StackLayout  HorizontalOptions="Center" VerticalOptions="Center">
+            <Label Text="E-Mail:"  />
+            <Entry x:Name="emailEntry" MaxLength="40" WidthRequest="550" HeightRequest="40" />
+            </StackLayout>
+
+            <BoxView HeightRequest="10" Color="Transparent" />
+            <BoxView HeightRequest="10" Color="Transparent" />
+            
+            <Label Text="Was ist Ihr Anliegen?" />
+            <RadioButton Content="Meine App ist Kaputt" />
+            <RadioButton Content="Fragen zum System" />
+            <RadioButton Content="Fragen zu Updates und Sicherheit" />
+
+            <BoxView HeightRequest="10" Color="Transparent" />
+            <BoxView HeightRequest="10" Color="Transparent" />
+            
+            <StackLayout VerticalOptions="Center" >
+                    <Label Text="Datum der Fehlermeldung: "/>
+                    <DatePicker x:Name="MyDatePicker" DateSelected="OnDateSelected" />
+                <Label x:Name="SelectedDateLabel" />
+            </StackLayout>
+
+            <BoxView HeightRequest="10" Color="Transparent" />
+            <BoxView HeightRequest="10" Color="Transparent" />
+
+
+                <Label Text="Ich stimme zu, dass meine Nachricht für Erhebungs-Zwecke genutzt werden darf" />
+            <Switch x:Name="consentSwitch" />
+
+            <BoxView HeightRequest="10" Color="Transparent" />
+            <BoxView HeightRequest="10" Color="Transparent" />
+
+            <Entry Placeholder="Ihre Nachricht" x:Name="messageEntry" />
+            <Button Text="Nachricht senden" Clicked="OnSendMessageClicked" />
+        </VerticalStackLayout>
+    </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
