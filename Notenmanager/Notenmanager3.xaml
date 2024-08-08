@@ -347,7 +347,7 @@
 
             <Button
         x:Name="CounterBtn"
-        Text="Nächstes Jahr"
+        Text="Vorheriges Jahr"
         Clicked="OnNavigate"
         HorizontalOptions="Center" />
 
