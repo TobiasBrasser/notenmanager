@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Notenmanager.SubjectDetailPage"
+             Title="Fachdetails">
+
+    <VerticalStackLayout Padding="10">
+        <Label 
+            x:Name="subjectNameLabel"
+            FontSize="32" 
+            FontAttributes="Bold"
+            HorizontalOptions="Center" 
+            VerticalOptions="Start" />
+
+        <!-- Label für den Durchschnitt -->
+        <Label 
+            x:Name="averageGradeLabel"
+            FontSize="20"
+            FontAttributes="Italic"
+            HorizontalOptions="Center"
+            VerticalOptions="Start"
+            TextColor="Gray" />
+
+        <StackLayout>
+            <Grid Padding="5" BackgroundColor="#4630D9">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" /> <!-- Spalte für den Bearbeiten-Button -->
+                    <ColumnDefinition Width="*" /> <!-- Spalte für den Löschen-Button -->
+                </Grid.ColumnDefinitions>
+                <!-- Werte in den entsprechenden Spalten anzeigen -->
+                <Label Text="Titel" FontAttributes="Bold" Grid.Row="0" Grid.Column="0" TextColor="White"  HorizontalOptions="Center"/>
+                <Label Text="Note" FontAttributes="Bold" Grid.Row="0" Grid.Column="1" TextColor="White" HorizontalOptions="Center"/>
+                <Label Text="Gewichtung" FontAttributes="Bold" Grid.Row="0" Grid.Column="2" TextColor="White" HorizontalOptions="Center"/>
+                <Label Text="Aktionen" FontAttributes="Bold" Grid.Row="0" Grid.Column="3" TextColor="White" HorizontalOptions="End"/>
+            </Grid>
+        </StackLayout>
+
+        <CollectionView x:Name="gradeListView" BackgroundColor="LightGray">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="5" BackgroundColor="#E8EDEB">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" /> <!-- Spalte für den Bearbeiten-Button -->
+                            <ColumnDefinition Width="*" /> <!-- Spalte für den Löschen-Button -->
+                        </Grid.ColumnDefinitions>
+                        <!-- Werte in den entsprechenden Spalten anzeigen -->
+                        <Label Text="{Binding Title}" FontSize="16" Margin="5" Grid.Row="0" Grid.Column="0" HorizontalOptions="Center" />
+                        <Label Text="{Binding Grade}" FontSize="16" Margin="5" Grid.Row="0" Grid.Column="1" HorizontalOptions="Center" />
+                        <Label Text="{Binding Weight}" FontSize="16" Margin="5" Grid.Row="0" Grid.Column="2" HorizontalOptions="Center" />
+                        
+                        <!-- Bearbeiten-Button -->
+                        <Button Text="Bearbeiten" 
+                                Clicked="OnEditNoteClicked" 
+                                Grid.Row="0" 
+                                Grid.Column="3" 
+                                BackgroundColor="Orange" 
+                                TextColor="White"
+                                WidthRequest="100"
+                                HorizontalOptions="End"/>
+
+                        <!-- Löschen-Button -->
+                        <Button Text="Löschen" 
+                                Clicked="OnDeleteNoteClicked" 
+                                Grid.Row="0" 
+                                Grid.Column="4" 
+                                BackgroundColor="Red" 
+                                TextColor="White"
+                                WidthRequest="100"
+                                HorizontalOptions="Start"/>
+                        
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Eingabefelder für Note -->
+        <StackLayout x:Name="inputFields" IsVisible="False" Padding="10" WidthRequest="{OnPlatform Default=400, iOS=400, Android=400, WinUI=400}">
+            <Entry x:Name="titleEntry" Placeholder="Titel" WidthRequest="200" />
+            <Entry x:Name="gradeEntry" Placeholder="Note (1-6)" Keyboard="Numeric" WidthRequest="200" />
+            <Entry x:Name="weightEntry" Placeholder="Gewichtung" Keyboard="Numeric" WidthRequest="200" />
+            <Button Text="Hinzufügen" Clicked="OnAddNoteClicked" WidthRequest="200"/>
+            <Button Text="Abbrechen" Clicked="OnCancelNoteClicked" WidthRequest="200" />
+        </StackLayout>
+
+        <!-- Button zum Hinzufügen von Noten -->
+        <Button 
+            Text="Note hinzufügen" 
+            Clicked="OnShowInputFieldsClicked" 
+            HorizontalOptions="Center" 
+            VerticalOptions="End" />
+    </VerticalStackLayout>
+</ContentPage>

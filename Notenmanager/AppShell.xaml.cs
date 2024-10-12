@@ -11,6 +11,7 @@
             Routing.RegisterRoute("//Notenmanager2", typeof(Notenmanager2));    
             Routing.RegisterRoute("//Notenmanager3", typeof(Notenmanager3));
             Routing.RegisterRoute("//Impressum", typeof(Impressum));
+            Routing.RegisterRoute(nameof(SubjectDetailPage), typeof(SubjectDetailPage));
         }
 
         
