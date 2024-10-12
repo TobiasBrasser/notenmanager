@@ -1,6 +1,8 @@
 using Microsoft.Maui.Controls;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Notenmanager
 {
@@ -8,6 +10,7 @@ namespace Notenmanager
     {
         private List<GradeInfo> notenList;
         private GradeInfo currentGrade; // Um die aktuell bearbeitete Note zu speichern
+        private DatabaseService _databaseService;
 
         public SubjectDetailPage(string subjectName)
         {
@@ -16,6 +19,49 @@ namespace Notenmanager
 
             // Setze den Titel des Faches in das Label
             subjectNameLabel.Text = subjectName;
+
+            // Datenbankpfad festlegen und DatabaseService initialisieren
+            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "grades.db");
+            _databaseService = new DatabaseService(dbPath);
+
+            // Noten laden
+            LoadGradesAsync();
+        }
+
+        private async void LoadGradesAsync()
+        {
+            // Lade die Noten für das spezifische Fach
+            notenList = await _databaseService.GetGradesBySubjectAsync(subjectNameLabel.Text);
+
+            UpdateNoteList(); // Aktualisiere die Anzeige
+            CalculateAndDisplayAverage(); // Berechne den Durchschnitt und aktualisiere das Label
+        }
+
+        // Methode zur Berechnung des Durchschnitts
+        private void CalculateAndDisplayAverage()
+        {
+            if (notenList != null && notenList.Count > 0)
+            {
+                double totalGrades = 0;
+                double totalWeight = 0;
+
+                foreach (var grade in notenList)
+                {
+                    if (double.TryParse(grade.Grade, out double gradeValue) && double.TryParse(grade.Weight, out double weightValue))
+                    {
+                        totalGrades += gradeValue * (weightValue / 100);
+                        totalWeight += weightValue;
+                    }
+                }
+
+                // Berechne den gewichteten Durchschnitt
+                double averageGrade = totalGrades / (totalWeight / 100);
+                averageGradeLabel.Text = $"Durchschnitt: {averageGrade:F2}"; // Zeige den Durchschnitt an, auf 2 Dezimalstellen gerundet
+            }
+            else
+            {
+                averageGradeLabel.Text = "Keine Noten vorhanden.";
+            }
         }
 
         // Methode zum Anzeigen der Eingabefelder
@@ -26,7 +72,7 @@ namespace Notenmanager
         }
 
         // Methode zum Hinzufügen einer Note
-        private void OnAddNoteClicked(object sender, EventArgs e)
+        private async void OnAddNoteClicked(object sender, EventArgs e)
         {
             string title = titleEntry.Text;
             string gradeStr = gradeEntry.Text;
@@ -37,30 +83,35 @@ namespace Notenmanager
                 !double.TryParse(gradeStr, out double grade) || grade < 1 || grade > 6 ||
                 !double.TryParse(weightStr, out double weight) || weight <= 0 || weight > 100)
             {
-                DisplayAlert("Fehler", "Bitte geben Sie einen gültigen Titel, eine Note (1-6) und eine Gewichtung (0-100%) ein.", "OK");
+                await DisplayAlert("Fehler", "Bitte geben Sie einen gültigen Titel, eine Note (1-6) und eine Gewichtung (0-100%) ein.", "OK");
                 return;
             }
 
-            // Hier wird die neue Instanz von GradeInfo mit Gewicht erstellt
             if (currentGrade != null) // Bearbeiten-Modus
             {
                 currentGrade.Title = title;
                 currentGrade.Grade = gradeStr;
                 currentGrade.Weight = weightStr;
-                currentGrade = null; // Bearbeiten abgeschlossen
+                await _databaseService.UpdateGradeAsync(currentGrade);
+                currentGrade = null;
             }
             else // Hinzufügen-Modus
             {
-                var newGrade = new GradeInfo(title, gradeStr, weightStr);
-                notenList.Add(newGrade);
+                var newGrade = new GradeInfo
+                {
+                    Title = title,
+                    Grade = gradeStr,
+                    Weight = weightStr,
+                    SubjectName = subjectNameLabel.Text // Fachname hinzufügen
+                };
+
+                await _databaseService.AddGradeAsync(newGrade); // Neue Note hinzufügen
             }
 
-            // Aktualisiere die Anzeige der Noten
-            UpdateNoteList();
+            LoadGradesAsync(); // Liste neu laden
 
-            // Eingabefelder zurücksetzen und ausblenden
             ClearInputFields();
-            inputFields.IsVisible = false; // Eingabefelder ausblenden
+            inputFields.IsVisible = false;
         }
 
         // Methode zur Bearbeitung einer Note
@@ -89,19 +140,19 @@ namespace Notenmanager
         {
             gradeListView.ItemsSource = null; // Setze die Source auf null, um die Liste neu zu laden
             gradeListView.ItemsSource = notenList; // Aktualisiere die Anzeige mit den neuen Werten
-            // Hier kannst du auch die Berechnung des Durchschnitts hinzufügen, falls nötig
         }
 
         // Methode zum Löschen einer Note
-        private void OnDeleteNoteClicked(object sender, EventArgs e)
+        private async void OnDeleteNoteClicked(object sender, EventArgs e)
         {
             var button = (Button)sender;
             var selectedGrade = (GradeInfo)button.BindingContext;
 
             // Entferne die gewählte Note aus der Liste
-            notenList.Remove(selectedGrade);
-            UpdateNoteList(); // Aktualisiere die Anzeige
+            await _databaseService.DeleteGradeAsync(selectedGrade); // Löschen der Note aus der DB
+            LoadGradesAsync(); // Aktualisiere die Anzeige
         }
+
         // Methode zum Zurücksetzen der Eingabefelder
         private void ClearInputFields()
         {

@@ -30,8 +30,10 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" /> <!-- Spalte für den Bearbeiten-Button -->
-                    <ColumnDefinition Width="*" /> <!-- Spalte für den Löschen-Button -->
+                    <ColumnDefinition Width="*" />
+                    <!-- Spalte für den Bearbeiten-Button -->
+                    <ColumnDefinition Width="*" />
+                    <!-- Spalte für den Löschen-Button -->
                 </Grid.ColumnDefinitions>
                 <!-- Werte in den entsprechenden Spalten anzeigen -->
                 <Label Text="Titel" FontAttributes="Bold" Grid.Row="0" Grid.Column="0" TextColor="White"  HorizontalOptions="Center"/>
@@ -52,14 +54,16 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" /> <!-- Spalte für den Bearbeiten-Button -->
-                            <ColumnDefinition Width="*" /> <!-- Spalte für den Löschen-Button -->
+                            <ColumnDefinition Width="*" />
+                            <!-- Spalte für den Bearbeiten-Button -->
+                            <ColumnDefinition Width="*" />
+                            <!-- Spalte für den Löschen-Button -->
                         </Grid.ColumnDefinitions>
                         <!-- Werte in den entsprechenden Spalten anzeigen -->
                         <Label Text="{Binding Title}" FontSize="16" Margin="5" Grid.Row="0" Grid.Column="0" HorizontalOptions="Center" />
                         <Label Text="{Binding Grade}" FontSize="16" Margin="5" Grid.Row="0" Grid.Column="1" HorizontalOptions="Center" />
                         <Label Text="{Binding Weight}" FontSize="16" Margin="5" Grid.Row="0" Grid.Column="2" HorizontalOptions="Center" />
-                        
+
                         <!-- Bearbeiten-Button -->
                         <Button Text="Bearbeiten" 
                                 Clicked="OnEditNoteClicked" 
@@ -79,7 +83,7 @@
                                 TextColor="White"
                                 WidthRequest="100"
                                 HorizontalOptions="Start"/>
-                        
+
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
