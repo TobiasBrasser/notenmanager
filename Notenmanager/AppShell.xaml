@@ -12,7 +12,7 @@
             <ShellContent Icon="dotnet_bot.svg" ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" />
         </Tab>
         <Tab Title="Notenmanager" Icon ="dotnet_bot.svg">
-            <ShellContent ContentTemplate="{DataTemplate local:Notenmanager}" Route="Notenmanager" />
+            <ShellContent ContentTemplate="{DataTemplate local:Year}" Route="Year" />
         </Tab>
 
         <Tab Title="Hilfe" Icon="dotnet_bot.svg">

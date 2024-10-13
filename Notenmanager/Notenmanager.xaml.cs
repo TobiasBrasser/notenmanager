@@ -7,13 +7,16 @@ namespace Notenmanager
 {
     public partial class Notenmanager : ContentPage
     {
+        private string _yearName;
         private DatabaseService _databaseService;
 
-        public Notenmanager()
+        public Notenmanager(string yearName)
         {
             InitializeComponent();
 
             // Datenbankpfad festlegen und DatabaseService initialisieren
+            _yearName = yearName;
+
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "notenmanager.db");
             _databaseService = new DatabaseService(dbPath);
 
@@ -24,7 +27,8 @@ namespace Notenmanager
         // Methode zum Laden der Fächer aus der Datenbank
         private async Task LoadSubjectsAsync()
         {
-            var subjects = await _databaseService.GetSubjectsAsync();
+            int yearId = await GetYearId();
+            var subjects = await _databaseService.GetSubjectsByYearIdAsync(yearId);
 
             foreach (var subject in subjects)
             {
@@ -42,8 +46,16 @@ namespace Notenmanager
 
             if (!string.IsNullOrWhiteSpace(subjectName))
             {
+
+                int yearId = await GetYearId();
                 // Neues Fach zur Datenbank hinzufügen
-                var newSubject = new Subject { Name = subjectName };
+                var newSubject = new Subject
+                {
+                    Name = subjectName,
+                    YearId = yearId, 
+                    YearName = _yearName 
+                };
+
                 await _databaseService.AddSubjectAsync(newSubject);
 
                 // Füge das neue Fach zum Layout hinzu
@@ -51,7 +63,12 @@ namespace Notenmanager
             }
         }
 
-        // Methode zum Hinzufügen eines Fachs zum Layout
+        private async Task<int> GetYearId()
+        {
+            return await _databaseService.GetYearIdByNameAsync(_yearName);
+        }
+
+
         private void AddSubjectToLayout(Subject subject)
         {
             Frame newFrame = new Frame
@@ -122,7 +139,7 @@ namespace Notenmanager
             // Tippen auf das Fach öffnet die Detailseite für die Noteneingabe
             newFrame.GestureRecognizers.Add(new TapGestureRecognizer
             {
-                Command = new Command(() => OnSubjectTapped(subject.Name))
+                Command = new Command(() => OnSubjectTapped(subject.Name, _yearName))
             });
 
             // Füge das neue Fach zur Hauptseite hinzu
@@ -131,10 +148,10 @@ namespace Notenmanager
 
 
         // Methode zum Öffnen der SubjectDetailPage
-        private void OnSubjectTapped(string subjectName)
+        private void OnSubjectTapped(string subjectName, string _yearname)
         {
             // Öffne die Detailseite, um Noten einzugeben
-            Navigation.PushAsync(new SubjectDetailPage(subjectName));
+            Navigation.PushAsync(new SubjectDetailPage(subjectName, _yearname));
         }
 
         // Methode zum Löschen eines Fachs

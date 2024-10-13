@@ -11,14 +11,16 @@ namespace Notenmanager
         private List<GradeInfo> notenList;
         private GradeInfo currentGrade; // Um die aktuell bearbeitete Note zu speichern
         private DatabaseService _databaseService;
+        private string _yearName;
 
-        public SubjectDetailPage(string subjectName)
+        public SubjectDetailPage(string subjectName, string yearName)
         {
             InitializeComponent();
             notenList = new List<GradeInfo>();
 
             // Setze den Titel des Faches in das Label
             subjectNameLabel.Text = subjectName;
+            _yearName = yearName;
 
             // Datenbankpfad festlegen und DatabaseService initialisieren
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "grades.db");
@@ -30,12 +32,13 @@ namespace Notenmanager
 
         private async void LoadGradesAsync()
         {
-            // Lade die Noten für das spezifische Fach
-            notenList = await _databaseService.GetGradesBySubjectAsync(subjectNameLabel.Text);
+            // Lade die Noten für das spezifische Fach und das aktuelle Jahr
+            notenList = await _databaseService.GetGradesBySubjectAndYearAsync(subjectNameLabel.Text, _yearName);
 
             UpdateNoteList(); // Aktualisiere die Anzeige
             CalculateAndDisplayAverage(); // Berechne den Durchschnitt und aktualisiere das Label
         }
+
 
         // Methode zur Berechnung des Durchschnitts
         private void CalculateAndDisplayAverage()
@@ -102,7 +105,8 @@ namespace Notenmanager
                     Title = title,
                     Grade = gradeStr,
                     Weight = weightStr,
-                    SubjectName = subjectNameLabel.Text // Fachname hinzufügen
+                    SubjectName = subjectNameLabel.Text,
+                    YearName = _yearName
                 };
 
                 await _databaseService.AddGradeAsync(newGrade); // Neue Note hinzufügen

@@ -11,7 +11,7 @@
 
         private async void OnNavigate(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync("//Notenmanager");
+            await Shell.Current.GoToAsync("//Year");
         }
 
         private async void OnBeenden(System.Object sender, System.EventArgs e)

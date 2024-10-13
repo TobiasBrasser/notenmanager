@@ -14,33 +14,33 @@
                 SemanticProperties.Description="Cute dot net bot waving hi to you!"
                 HeightRequest="200"
                 HorizontalOptions="Center" />
-            
-            
+
+
             <StackLayout Orientation="Vertical" VerticalOptions="Center">
-            <Label
+                <Label
                 Text="Notenmanager"
                 SemanticProperties.HeadingLevel="Level1"
                 FontSize="32"
                 HorizontalOptions="Center" />
 
-            <Label
+                <Label
                 Text="Herzlich Willkommen zum Notenmanager."
                 SemanticProperties.HeadingLevel="Level2"
                 SemanticProperties.Description="Welcome to dot net Multi platform App U I"
                 FontSize="18"
                 HorizontalOptions="CenterAndExpand">
-            </Label>
+                </Label>
 
-            <Label
+                <Label
                  Text="Klicken Sie auf die Navigation oder auf den Knopf, um Ihre Noten einzutragen"
                  SemanticProperties.HeadingLevel="Level2"
                  SemanticProperties.Description="Welcome to dot net Multi platform App U I"
                  FontSize="18"
                  HorizontalOptions="CenterAndExpand">
-            </Label>
+                </Label>
                 <BoxView HeightRequest="10" Color="Transparent" />
                 <BoxView HeightRequest="10" Color="Transparent" />
-                
+
 
 
                 <Button
@@ -50,23 +50,6 @@
                 HorizontalOptions="Center" />
 
             </StackLayout>
-
-           
-            
-            
-            <TableView Intent="Menu" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                <TableRoot>
-                    <TableSection Title="Erste Schritte">
-                        <TextCell Text="1. Navigation zum Notenmanager"
-                      Detail="Klicke auf den blauen Knopf oberhalb dieser Tabelle." />
-                        <TextCell Text="2. Noten eintragen"
-                      Detail="Noten können einfach eingschrieben werden. Das Programm rechnet automatisch für Sie." />
-                        <TextCell Text="3. Zwischen den Schuljahren wechseln"
-                      Detail="Scrollen Sie dafür ganz nach unten und drücken Sie die jeweiligen Buttons." />
-                       
-                    </TableSection>
-                </TableRoot>
-            </TableView>
 
             <BoxView HeightRequest="10" Color="Transparent" />
             <BoxView HeightRequest="10" Color="Transparent" />

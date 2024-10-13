@@ -94,5 +94,60 @@ namespace Notenmanager
             return totalWeight > 0 ? totalGrades / totalWeight : 0; // Avoid division by zero
         }
 
+        public async Task<List<YearModel>> GetYearsAsync()
+        {
+            return await _database.Table<YearModel>().ToListAsync();
+        }
+
+
+        public async Task AddYearAsync(YearModel year)
+        {
+            await _database.InsertAsync(year);
+        }
+
+        public async Task DeleteYearAsync(YearModel year)
+        {
+            await _database.DeleteAsync(year);
+        }
+
+        public async Task<List<GradeInfo>> GetGradesBySubjectAndYearAsync(string subjectName, string yearName)
+        {
+            var grades = new List<GradeInfo>();
+
+            
+                // Ändern Sie die Abfrage, um das Jahr zu berücksichtigen
+                grades = await _database.Table<GradeInfo>()
+                    .Where(g => g.SubjectName == subjectName && g.YearName == yearName)
+                    .ToListAsync();
+            
+
+            return grades;
+        }
+
+        public async Task DeleteSubjectsByYearAsync(string yearName)
+        {
+                await _database.ExecuteAsync("DELETE FROM Subject WHERE YearName = ?", yearName);
+        }
+
+        public async Task DeleteGradesByYearAsync(string yearName)
+        {
+                // Lösche alle Noten, die zu dem Jahr gehören
+                await _database.ExecuteAsync("DELETE FROM GradeInfo WHERE YearName = ?", yearName);
+        }
+
+        public async Task<int> GetYearIdByNameAsync(string yearName)
+        {
+                // Suche nach dem Jahr anhand des Namens
+                var year = await _database.Table<YearModel>()
+                    .FirstOrDefaultAsync(y => y.Name == yearName);
+                return year?.Id ?? 0;
+        }
+
+        public async Task<List<Subject>> GetSubjectsByYearIdAsync(int yearId)
+        {
+                return await _database.Table<Subject>()
+                    .Where(s => s.YearId == yearId) // Filtere nach YearId
+                    .ToListAsync();
+        }
     }
 }

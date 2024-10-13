@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
-using Notenmanager; 
+using Notenmanager;
+using System.Text.Json.Serialization.Metadata;
 
 
 namespace Notenmanager
@@ -17,6 +18,8 @@ namespace Notenmanager
         public string Grade { get; set; }
         public string Weight { get; set; }
         public string SubjectName { get; set; }
+        public int SubjectId { get; set; }
+        public String YearName { get; set; }
     }
 
 }

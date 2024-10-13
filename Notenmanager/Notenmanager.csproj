@@ -55,10 +55,14 @@
 
 	<ItemGroup>
 	  <Compile Remove="GradeInputView.xaml.cs" />
+	  <Compile Remove="Notenmanager2.xaml.cs" />
+	  <Compile Remove="Notenmanager3.xaml.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <MauiXaml Remove="GradeInputView.xaml" />
+	  <MauiXaml Remove="Notenmanager2.xaml" />
+	  <MauiXaml Remove="Notenmanager3.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -86,13 +90,10 @@
 	  <MauiXaml Update="Notenmanager.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Notenmanager2.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Notenmanager3.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="SubjectDetailPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Year.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

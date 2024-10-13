@@ -14,5 +14,6 @@ namespace Notenmanager
         public int Id { get; set; } 
         public string Name { get; set; }
         public int YearId { get; set; } 
+        public string YearName { get; set; }
     }
 }
