@@ -14,17 +14,14 @@ namespace Notenmanager
         {
             InitializeComponent();
 
-            // Datenbankpfad festlegen und DatabaseService initialisieren
             _yearName = yearName;
 
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "notenmanager.db");
             _databaseService = new DatabaseService(dbPath);
 
-            // Fächer aus der Datenbank laden
             LoadSubjectsAsync();
         }
 
-        // Methode zum Laden der Fächer aus der Datenbank
         private async Task LoadSubjectsAsync()
         {
             int yearId = await GetYearId();
@@ -32,36 +29,41 @@ namespace Notenmanager
 
             foreach (var subject in subjects)
             {
-                AddSubjectToLayout(subject); // Füge jedes Fach zum Layout hinzu
+                AddSubjectToLayout(subject); 
             }
         }
 
-        // Methode für das Hinzufügen eines neuen Faches
         private async void OnAddSubjectClicked(object sender, EventArgs e)
         {
-            // Fragen Sie den Benutzer nach dem Fachnamen
             string subjectName = await DisplayPromptAsync("Fach hinzufügen", "Bitte geben Sie den Namen des Fachs ein:",
                 maxLength: 30,
                 keyboard: Keyboard.Default);
 
             if (!string.IsNullOrWhiteSpace(subjectName))
             {
-
                 int yearId = await GetYearId();
-                // Neues Fach zur Datenbank hinzufügen
+
+                bool subjectExists = await _databaseService.SubjectExistsAsync(subjectName, yearId);
+
+                if (subjectExists)
+                {
+                    await DisplayAlert("Fehler", $"Das Fach '{subjectName}' ist bereits vorhanden.", "OK");
+                    return; 
+                }
+
                 var newSubject = new Subject
                 {
                     Name = subjectName,
-                    YearId = yearId, 
-                    YearName = _yearName 
+                    YearId = yearId,
+                    YearName = _yearName
                 };
 
                 await _databaseService.AddSubjectAsync(newSubject);
 
-                // Füge das neue Fach zum Layout hinzu
                 AddSubjectToLayout(newSubject);
             }
         }
+
 
         private async Task<int> GetYearId()
         {
@@ -85,26 +87,24 @@ namespace Notenmanager
                 Text = "Löschen",
                 BackgroundColor = Color.FromHex("#FF0000"),
                 TextColor = Colors.White,
-                FontSize = 12, // Verkleinere die Schriftgröße
-                WidthRequest = 80, // Breite des Buttons
-                HeightRequest = 40, // Höhe des Buttons
-                HorizontalOptions = LayoutOptions.End, // Rechtsbündig
-                VerticalOptions = LayoutOptions.Center // Zentriere vertikal
+                FontSize = 12, 
+                WidthRequest = 80, 
+                HeightRequest = 40,
+                HorizontalOptions = LayoutOptions.End, 
+                VerticalOptions = LayoutOptions.Center
             };
 
-            // Event-Handler für das Löschen des Fachs
             deleteButton.Clicked += async (s, e) => await DeleteSubject(subject);
 
             Grid grid = new Grid
             {
                 ColumnDefinitions =
         {
-            new ColumnDefinition { Width = GridLength.Star }, // Platz für den Text
-            new ColumnDefinition { Width = GridLength.Auto }  // Platz für den Button
+            new ColumnDefinition { Width = GridLength.Star }, 
+            new ColumnDefinition { Width = GridLength.Auto }  
         }
             };
 
-            // Fachname und Beschreibung in der linken Spalte (Spalte 0)
             var stackLayout = new StackLayout
             {
                 Children =
@@ -114,66 +114,58 @@ namespace Notenmanager
                 Text = subject.Name,
                 FontSize = 18,
                 FontAttributes = FontAttributes.Bold,
-                TextColor = Colors.White // Setze die Textfarbe auf Weiß
+                TextColor = Colors.White 
             },
             new Label
             {
                 Text = "Tippen, um Noten einzugeben",
                 HorizontalOptions = LayoutOptions.Center,
-                TextColor = Colors.White // Setze die Textfarbe auf Weiß
+                TextColor = Colors.White 
             }
         }
             };
 
-            // Positioniere den StackLayout in der ersten Spalte (Spalte 0)
             grid.Children.Add(stackLayout);
             Grid.SetColumn(stackLayout, 0);
 
-            // Positioniere den Löschen-Button in der zweiten Spalte (Spalte 1)
             grid.Children.Add(deleteButton);
             Grid.SetColumn(deleteButton, 1);
 
-            // Füge das Grid in den Frame ein
             newFrame.Content = grid;
-
-            // Tippen auf das Fach öffnet die Detailseite für die Noteneingabe
             newFrame.GestureRecognizers.Add(new TapGestureRecognizer
             {
                 Command = new Command(() => OnSubjectTapped(subject.Name, _yearName))
             });
 
-            // Füge das neue Fach zur Hauptseite hinzu
-            mainLayout.Children.Insert(mainLayout.Children.Count - 1, newFrame); // Füge das Fach vor dem letzten Element ein
+            mainLayout.Children.Insert(mainLayout.Children.Count - 2, newFrame); 
         }
 
-
-        // Methode zum Öffnen der SubjectDetailPage
         private void OnSubjectTapped(string subjectName, string _yearname)
         {
-            // Öffne die Detailseite, um Noten einzugeben
             Navigation.PushAsync(new SubjectDetailPage(subjectName, _yearname));
         }
 
-        // Methode zum Löschen eines Fachs
-        // Methode zum Löschen eines Fachs
         private async Task DeleteSubject(Subject subject)
         {
             bool confirm = await DisplayAlert("Bestätigen", $"Möchten Sie das Fach '{subject.Name}' wirklich löschen?", "Ja", "Nein");
             if (confirm)
             {
-                await _databaseService.DeleteSubjectAsync(subject); // Fach aus der Datenbank löschen
+                await _databaseService.DeleteSubjectAsync(subject); 
 
-                // Suche den Frame, der das Fach darstellt
                 var frameToRemove = mainLayout.Children
                     .OfType<Frame>()
                     .FirstOrDefault(f => ((Label)((StackLayout)((Grid)f.Content).Children[0]).Children[0]).Text == subject.Name);
 
-                // Entferne den Frame aus dem Layout, falls er gefunden wurde
                 if (frameToRemove != null)
                 {
                     mainLayout.Children.Remove(frameToRemove);
                 }
             }
+        }
+
+        private async void OnBackToYear(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//Year");
         }
 
     }

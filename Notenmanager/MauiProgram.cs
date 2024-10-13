@@ -21,6 +21,7 @@ namespace Notenmanager
                     fonts.AddFont("JenrivType-LightItalic.otf", "JenrivType-LightItalic");
                     fonts.AddFont("OPTITimes-Roman.otf", "Times-Roman");
                     fonts.AddFont("OPTITimes-Italic.otf", "Times-Italic");
+                    fonts.AddFont("material_icon_regular.ttf", "MaterialIcon");
                 });
 
 

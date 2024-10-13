@@ -1,17 +1,40 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Notenmanager.Models"
              x:Class="Notenmanager.Year"
              Title="Jahre Verwalten">
     <ScrollView>
         <VerticalStackLayout x:Name="mainLayout" Padding="5">
             <BoxView HeightRequest="10" Color="Transparent" />
 
+            <Label 
+                Text="Semester"
+                FontSize="32"
+                HorizontalOptions="Center"
+                FontAttributes="Bold"
+                Padding="10"
+                />
             <Button
                 x:Name="AddYearButton"
-                Text="Jahr hinzufügen"
+                Text="Aktuelles Semester hinzufügen"
                 Clicked="OnAddYearClicked"
-                HorizontalOptions="Center" />
+                HorizontalOptions="Center"
+                WidthRequest="300"/>
+
+            <Button
+                x:Name="BackToHome"   
+                Text="Zurück zu Home"
+                Clicked="OnBackToHome"
+                HorizontalOptions="Center" 
+                WidthRequest="300"
+                BackgroundColor="White"
+                BorderColor="#4630D9"
+                BorderWidth="3"
+                TextColor="#4630D9"
+                Margin="5"
+                />
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

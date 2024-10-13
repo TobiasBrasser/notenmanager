@@ -6,16 +6,38 @@
     <ScrollView>
         <VerticalStackLayout x:Name="mainLayout" Padding="5">
             <BoxView HeightRequest="10" Color="Transparent" />
-        
 
-        <Button
-        x:Name="AddSubjectButton"
-        Text="Fach hinzufügen"
-        Clicked="OnAddSubjectClicked"
-        HorizontalOptions="Center" />   
+            <Label 
+                Text="Fächer"
+                FontSize="32"
+                HorizontalOptions="Center"
+                FontAttributes="Bold"
+                Padding="10"/>
+
+            <Button
+                ImageSource="icon_add.svg"
+                x:Name="AddSubjectButton"
+                Text="Fach hinzufügen"
+                Clicked="OnAddSubjectClicked"
+                HorizontalOptions="Center"
+                WidthRequest="300"/>
+
+            <Button
+                x:Name="BackToYear"
+                Text="Zurück zu Semester"
+                Clicked="OnBackToYear"
+                HorizontalOptions="Center" 
+                WidthRequest="300"
+                BackgroundColor="White"
+                BorderColor="#4630D9"
+                BorderWidth="3"
+                TextColor="#4630D9"
+                Margin="5"
+                />
+            
 
 
 
-    </VerticalStackLayout>
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

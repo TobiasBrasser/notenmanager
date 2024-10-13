@@ -13,41 +13,49 @@ namespace Notenmanager
         {
             InitializeComponent();
 
-            // Datenbankpfad festlegen und DatabaseService initialisieren
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "notenmanager.db");
             _databaseService = new DatabaseService(dbPath);
 
-            // Jahre aus der Datenbank laden
             LoadYearsAsync();
         }
 
-        // Methode zum Laden der Jahre aus der Datenbank
         private async Task LoadYearsAsync()
         {
             var years = await _databaseService.GetYearsAsync();
 
+            if (years.Count == 0)
+            {
+                string yearName = GenerateCurrentSemesterName();
+
+                var newYear = new YearModel { Name = yearName };
+                await _databaseService.AddYearAsync(newYear);
+                years.Add(newYear); 
+            }
+
             foreach (var year in years)
             {
-                AddYearToLayout(year); // Füge jedes Jahr zum Layout hinzu
+                AddYearToLayout(year);
             }
         }
 
-        // Methode für das Hinzufügen eines neuen Jahres
+
         private async void OnAddYearClicked(object sender, EventArgs e)
         {
-            // Generiere den nächsten Jahr-Namen
-            string yearName = await GenerateNextYearName();
+            string yearName = GenerateCurrentSemesterName();
 
-            // Neues Jahr zur Datenbank hinzufügen
+            var existingYears = await _databaseService.GetYearsAsync();
+            if (existingYears.Any(y => y.Name == yearName))
+            {
+                await DisplayAlert("Fehler", $"Das Jahr '{yearName}' existiert bereits.", "OK");
+                return;
+            }
+
             var newYear = new YearModel { Name = yearName };
             await _databaseService.AddYearAsync(newYear);
 
-            // Füge das neue Jahr zum Layout hinzu
             AddYearToLayout(newYear);
         }
 
-
-        // Methode zum Hinzufügen eines Jahres zum Layout
         private void AddYearToLayout(YearModel year)
         {
             Frame newFrame = new Frame
@@ -71,7 +79,6 @@ namespace Notenmanager
                 VerticalOptions = LayoutOptions.Center
             };
 
-            // Event-Handler für das Löschen des Jahres
             deleteButton.Clicked += async (s, e) => await DeleteYear(year);
 
             Grid grid = new Grid
@@ -109,23 +116,19 @@ namespace Notenmanager
             grid.Children.Add(deleteButton);
             Grid.SetColumn(deleteButton, 1);
 
-
             newFrame.Content = grid;
 
-            // Tippen auf das Jahr öffnet die Seite für die Fächer des Jahres
             newFrame.GestureRecognizers.Add(new TapGestureRecognizer
             {
                 Command = new Command(() => OnYearTapped(year.Name))
             });
 
-            mainLayout.Children.Insert(mainLayout.Children.Count - 1, newFrame);
+            mainLayout.Children.Insert(mainLayout.Children.Count - 2, newFrame);
         }
 
-        // Methode zum Öffnen der Subject-Verwaltung für ein Jahr
         private void OnYearTapped(string yearName)
         {
-            // Öffne die Notenmanager-Seite mit den Fächern für das gewählte Jahr
-            Navigation.PushAsync(new Notenmanager(yearName)); // Übergabe des Jahres an Notenmanager
+            Navigation.PushAsync(new Notenmanager(yearName));
         }
 
 
@@ -134,14 +137,11 @@ namespace Notenmanager
             bool confirm = await DisplayAlert("Bestätigen", $"Möchten Sie das Jahr '{year.Name}' wirklich löschen?", "Ja", "Nein");
             if (confirm)
             {
-                // Lösche die Fächer und Noten, die zu diesem Jahr gehören
                 await _databaseService.DeleteSubjectsByYearAsync(year.Name);
                 await _databaseService.DeleteGradesByYearAsync(year.Name);
 
-                // Lösche das Jahr selbst
                 await _databaseService.DeleteYearAsync(year);
 
-                // Entferne den Frame aus dem Layout
                 var frameToRemove = mainLayout.Children
                     .OfType<Frame>()
                     .FirstOrDefault(f => ((Label)((StackLayout)((Grid)f.Content).Children[0]).Children[0]).Text == year.Name);
@@ -152,11 +152,27 @@ namespace Notenmanager
                 }
             }
         }
-        private async Task<string> GenerateNextYearName()
+
+        private string GenerateCurrentSemesterName()
         {
-            var years = await _databaseService.GetYearsAsync();
-            int yearCount = years.Count; // Anzahl der vorhandenen Jahre
-            return $"Jahr {yearCount + 1}"; // Generiere den nächsten Jahr-Namen
+            var currentYear = DateTime.Now.Year;
+            var nextYear = currentYear + 1;
+
+            string semesterType = DateTime.Now.Month >= 7 || DateTime.Now.Month <= 1 ? "Wintersemester" : "Sommersemester";
+
+            if (semesterType == "Wintersemester")
+            {
+                return $"Semester {currentYear} - {nextYear}";
+            }
+            else
+            {
+                return $"Semester {currentYear}";
+            }
+        }
+
+        private async void OnBackToHome(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//MainPage");
         }
     }
 }

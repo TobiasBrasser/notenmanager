@@ -9,7 +9,7 @@ namespace Notenmanager
     public partial class SubjectDetailPage : ContentPage
     {
         private List<GradeInfo> notenList;
-        private GradeInfo currentGrade; // Um die aktuell bearbeitete Note zu speichern
+        private GradeInfo currentGrade; 
         private DatabaseService _databaseService;
         private string _yearName;
 
@@ -18,29 +18,23 @@ namespace Notenmanager
             InitializeComponent();
             notenList = new List<GradeInfo>();
 
-            // Setze den Titel des Faches in das Label
             subjectNameLabel.Text = subjectName;
             _yearName = yearName;
 
-            // Datenbankpfad festlegen und DatabaseService initialisieren
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "grades.db");
             _databaseService = new DatabaseService(dbPath);
 
-            // Noten laden
             LoadGradesAsync();
         }
 
         private async void LoadGradesAsync()
         {
-            // Lade die Noten für das spezifische Fach und das aktuelle Jahr
             notenList = await _databaseService.GetGradesBySubjectAndYearAsync(subjectNameLabel.Text, _yearName);
 
-            UpdateNoteList(); // Aktualisiere die Anzeige
-            CalculateAndDisplayAverage(); // Berechne den Durchschnitt und aktualisiere das Label
+            UpdateNoteList(); 
+            CalculateAndDisplayAverage(); 
         }
 
-
-        // Methode zur Berechnung des Durchschnitts
         private void CalculateAndDisplayAverage()
         {
             if (notenList != null && notenList.Count > 0)
@@ -57,9 +51,8 @@ namespace Notenmanager
                     }
                 }
 
-                // Berechne den gewichteten Durchschnitt
                 double averageGrade = totalGrades / (totalWeight / 100);
-                averageGradeLabel.Text = $"Durchschnitt: {averageGrade:F2}"; // Zeige den Durchschnitt an, auf 2 Dezimalstellen gerundet
+                averageGradeLabel.Text = $"Durchschnitt: {averageGrade:F2}"; 
             }
             else
             {
@@ -67,21 +60,17 @@ namespace Notenmanager
             }
         }
 
-        // Methode zum Anzeigen der Eingabefelder
         private void OnShowInputFieldsClicked(object sender, EventArgs e)
         {
-            inputFields.IsVisible = true; // Eingabefelder anzeigen
-            ClearInputFields(); // Eingabefelder zurücksetzen
+            inputFields.IsVisible = true; 
+            ClearInputFields();
         }
-
-        // Methode zum Hinzufügen einer Note
         private async void OnAddNoteClicked(object sender, EventArgs e)
         {
             string title = titleEntry.Text;
             string gradeStr = gradeEntry.Text;
             string weightStr = weightEntry.Text;
 
-            // Überprüfen, ob die Eingaben gültig sind
             if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(gradeStr) ||
                 !double.TryParse(gradeStr, out double grade) || grade < 1 || grade > 6 ||
                 !double.TryParse(weightStr, out double weight) || weight <= 0 || weight > 100)
@@ -90,7 +79,14 @@ namespace Notenmanager
                 return;
             }
 
-            if (currentGrade != null) // Bearbeiten-Modus
+            bool gradeExists = await _databaseService.GradeExistsAsync(title, subjectNameLabel.Text, _yearName);
+            if (gradeExists)
+            {
+                await DisplayAlert("Fehler", $"Die Note '{title}' existiert bereits für das Fach '{subjectNameLabel.Text}'", "OK");
+                return; 
+            }
+
+            if (currentGrade != null) 
             {
                 currentGrade.Title = title;
                 currentGrade.Grade = gradeStr;
@@ -98,7 +94,7 @@ namespace Notenmanager
                 await _databaseService.UpdateGradeAsync(currentGrade);
                 currentGrade = null;
             }
-            else // Hinzufügen-Modus
+            else 
             {
                 var newGrade = new GradeInfo
                 {
@@ -109,61 +105,61 @@ namespace Notenmanager
                     YearName = _yearName
                 };
 
-                await _databaseService.AddGradeAsync(newGrade); // Neue Note hinzufügen
+                await _databaseService.AddGradeAsync(newGrade);
             }
 
-            LoadGradesAsync(); // Liste neu laden
+            LoadGradesAsync();
 
             ClearInputFields();
             inputFields.IsVisible = false;
         }
 
-        // Methode zur Bearbeitung einer Note
         private void OnEditNoteClicked(object sender, EventArgs e)
         {
             var button = (Button)sender;
             var selectedGrade = (GradeInfo)button.BindingContext;
 
-            // Setze die Eingabefelder mit den aktuellen Werten
             titleEntry.Text = selectedGrade.Title;
             gradeEntry.Text = selectedGrade.Grade;
             weightEntry.Text = selectedGrade.Weight;
-            currentGrade = selectedGrade; // Setze die aktuelle Note für die Bearbeitung
-            inputFields.IsVisible = true; // Eingabefelder anzeigen
+            currentGrade = selectedGrade; 
+            inputFields.IsVisible = true;
         }
 
-        // Methode zur Abbrechen der Noteneingabe
         private void OnCancelNoteClicked(object sender, EventArgs e)
         {
-            ClearInputFields(); // Eingabefelder zurücksetzen
-            inputFields.IsVisible = false; // Eingabefelder ausblenden
+            ClearInputFields(); 
+            inputFields.IsVisible = false; 
         }
 
-        // Methode zur Aktualisierung der Notenliste auf der Seite
         private void UpdateNoteList()
         {
-            gradeListView.ItemsSource = null; // Setze die Source auf null, um die Liste neu zu laden
-            gradeListView.ItemsSource = notenList; // Aktualisiere die Anzeige mit den neuen Werten
+            gradeListView.ItemsSource = null; 
+            gradeListView.ItemsSource = notenList; 
         }
-
-        // Methode zum Löschen einer Note
         private async void OnDeleteNoteClicked(object sender, EventArgs e)
         {
             var button = (Button)sender;
             var selectedGrade = (GradeInfo)button.BindingContext;
 
-            // Entferne die gewählte Note aus der Liste
-            await _databaseService.DeleteGradeAsync(selectedGrade); // Löschen der Note aus der DB
-            LoadGradesAsync(); // Aktualisiere die Anzeige
+            await _databaseService.DeleteGradeAsync(selectedGrade); 
+            LoadGradesAsync();
         }
 
-        // Methode zum Zurücksetzen der Eingabefelder
         private void ClearInputFields()
         {
             titleEntry.Text = string.Empty;
             gradeEntry.Text = string.Empty;
             weightEntry.Text = string.Empty;
-            currentGrade = null; // Setze die aktuelle Note zurück
+            currentGrade = null; 
         }
+
+        private async void OnBackToSubject(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("..");
+        }
+
+
+
     }
 }

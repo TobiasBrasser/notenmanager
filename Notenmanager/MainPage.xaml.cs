@@ -17,7 +17,7 @@
         private async void OnBeenden(System.Object sender, System.EventArgs e)
         {
             var result = await DisplayAlert("Beenden", "Wollen Sie die App wirklich beenden?", "Ja", "Nein");
-            if (result) //Ja
+            if (result) 
             {
                 System.Environment.Exit(0);
             }

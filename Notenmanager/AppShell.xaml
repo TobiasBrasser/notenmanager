@@ -23,4 +23,7 @@
             <ShellContent ContentTemplate="{DataTemplate local:Impressum}" Route="Impressum" />
         </Tab>
     </TabBar>
+
+    <ShellContent Route="Notenmanager" ContentTemplate="{DataTemplate local:Notenmanager}" />
+
 </Shell>

@@ -12,13 +12,9 @@ namespace Notenmanager
         public DatabaseService(string dbPath)
         {
             _database = new SQLiteAsyncConnection(dbPath);
-
-            // Erstelle beide Tabellen für Fächer und Noten, falls sie nicht vorhanden sind
             _database.CreateTableAsync<GradeInfo>().Wait();
             _database.CreateTableAsync<Subject>().Wait();
         }
-
-        // CRUD-Methoden für GradeInfo (Noten)
 
         public async Task<int> AddGradeAsync(GradeInfo grade)
         {
@@ -40,7 +36,6 @@ namespace Notenmanager
             return await _database.DeleteAsync(grade);
         }
 
-        // CRUD-Methoden für Subject (Fächer)
 
         public async Task<int> AddSubjectAsync(Subject subject)
         {
@@ -65,7 +60,7 @@ namespace Notenmanager
         public async Task<List<GradeInfo>> GetGradesBySubjectAsync(string subjectName)
         {
             return await _database.Table<GradeInfo>()
-                .Where(g => g.SubjectName == subjectName) // Filtern nach Fach
+                .Where(g => g.SubjectName == subjectName)
                 .ToListAsync();
         }
 
@@ -74,10 +69,9 @@ namespace Notenmanager
             var grades = await GetGradesBySubjectAsync(subjectName);
             if (grades.Count == 0)
             {
-                return 0; // Return 0 if no grades are found
+                return 0; 
             }
 
-            // Calculate the average grade
             double totalGrades = 0;
             double totalWeight = 0;
 
@@ -91,7 +85,7 @@ namespace Notenmanager
                 }
             }
 
-            return totalWeight > 0 ? totalGrades / totalWeight : 0; // Avoid division by zero
+            return totalWeight > 0 ? totalGrades / totalWeight : 0; 
         }
 
         public async Task<List<YearModel>> GetYearsAsync()
@@ -114,8 +108,6 @@ namespace Notenmanager
         {
             var grades = new List<GradeInfo>();
 
-            
-                // Ändern Sie die Abfrage, um das Jahr zu berücksichtigen
                 grades = await _database.Table<GradeInfo>()
                     .Where(g => g.SubjectName == subjectName && g.YearName == yearName)
                     .ToListAsync();
@@ -131,13 +123,11 @@ namespace Notenmanager
 
         public async Task DeleteGradesByYearAsync(string yearName)
         {
-                // Lösche alle Noten, die zu dem Jahr gehören
                 await _database.ExecuteAsync("DELETE FROM GradeInfo WHERE YearName = ?", yearName);
         }
 
         public async Task<int> GetYearIdByNameAsync(string yearName)
         {
-                // Suche nach dem Jahr anhand des Namens
                 var year = await _database.Table<YearModel>()
                     .FirstOrDefaultAsync(y => y.Name == yearName);
                 return year?.Id ?? 0;
@@ -146,8 +136,24 @@ namespace Notenmanager
         public async Task<List<Subject>> GetSubjectsByYearIdAsync(int yearId)
         {
                 return await _database.Table<Subject>()
-                    .Where(s => s.YearId == yearId) // Filtere nach YearId
+                    .Where(s => s.YearId == yearId) 
                     .ToListAsync();
         }
+
+        public async Task<bool> SubjectExistsAsync(string subjectName, int yearId)
+        {
+            var existingSubject = await _database.Table<Subject>()
+                .FirstOrDefaultAsync(s => s.Name == subjectName && s.YearId == yearId);
+            return existingSubject != null; 
+        }
+
+        public async Task<bool> GradeExistsAsync(string title, string subjectName, string yearName)
+        {
+            var existingGrade = await _database.Table<GradeInfo>()
+                .FirstOrDefaultAsync(g => g.Title == title && g.SubjectName == subjectName && g.YearName == yearName);
+            return existingGrade != null;
+        }
+
+
     }
 }
